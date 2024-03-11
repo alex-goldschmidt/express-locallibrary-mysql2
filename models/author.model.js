@@ -16,9 +16,16 @@ class Author {
     return { id: result.insertId, ...newAuthor };
   }
 
-  static async queryAll() {
+  static async queryAllAuthors() {
     const [rows] = await db.query("SELECT * FROM author");
     return rows;
+  }
+
+  static async queryByAuthorId(authorId) {
+    const [result] = await db.query("SELECT * FROM author WHERE authorId = ?", [
+      authorId,
+    ]);
+    return result[0];
   }
 
   static async updateByAuthorId(author, authorId) {

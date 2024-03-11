@@ -21,6 +21,13 @@ class Book {
     return rows;
   }
 
+  static async queryByBookId(bookId) {
+    const [result] = await db.query("SELECT * FROM book WHERE bookId = ?", [
+      bookId,
+    ]);
+    return result[0];
+  }
+
   static async updateByBookId(book, bookId) {
     const [rows] = await db.query(
       "UPDATE book SET title = ?, author = ?, summary = ?, isbn = ?, genre = ?, bookUrl = ? WHERE bookId = ?",
