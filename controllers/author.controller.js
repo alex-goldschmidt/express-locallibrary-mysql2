@@ -1,5 +1,5 @@
 const Author = require("../models/author.model");
-const asyncHandler = require("../utils/asyncErrorHandler");
+const { asyncHandler } = require("../utils/asyncErrorHandler");
 
 // Display list of all Authors.
 exports.queryAllAuthors = asyncHandler(async (req, res, next) => {

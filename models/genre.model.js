@@ -1,4 +1,4 @@
-const db = require("./db.js");
+const db = require("../config/db");
 
 class Genre {
   constructor(genre) {

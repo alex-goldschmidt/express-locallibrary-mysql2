@@ -29,3 +29,5 @@ router.get("/book/:id", bookController.queryByBookId);
 
 // GET request for list of all Book items.
 router.get("/books", bookController.queryAllBooks);
+
+module.exports = router;
