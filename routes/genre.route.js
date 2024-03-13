@@ -24,6 +24,6 @@ router.post("/genre/:id/update", genreController.genreUpdatePost);
 router.get("/genre/:id", genreController.queryByGenreId);
 
 // GET request for list of all Genre.
-router.get("/", genreController.queryAllGenres);
+router.get("/genres", genreController.queryAllGenres);
 
 module.exports = router;

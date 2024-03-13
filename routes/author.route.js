@@ -24,6 +24,6 @@ router.post("/author/:id/update", authorController.authorUpdatePost);
 router.get("/author/:id", authorController.queryByAuthorId);
 
 // GET request for list of all Authors.
-router.get("/", authorController.queryAllAuthors);
+router.get("/authors", authorController.queryAllAuthors);
 
 module.exports = router;

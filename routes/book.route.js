@@ -3,9 +3,6 @@ const bookController = require("../controllers/book.controller.js");
 const { asyncHandler } = require("../utils/asyncErrorHandler.js");
 var router = express.Router();
 
-// GET catalog home page.
-router.get("/", bookController.index);
-
 // GET request for creating a Book. NOTE This must come before routes that display Book (uses id).
 router.get("/book/create", bookController.bookCreateGet);
 

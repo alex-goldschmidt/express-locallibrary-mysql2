@@ -42,6 +42,6 @@ router.post(
 router.get("/bookinstance/:id", bookInstanceController.queryByBookInstanceId);
 
 // GET request for list of all BookInstance.
-router.get("/", bookInstanceController.queryAllBookInstances);
+router.get("/bookinstances", bookInstanceController.queryAllBookInstances);
 
 module.exports = router;
