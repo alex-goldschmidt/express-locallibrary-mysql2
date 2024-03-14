@@ -17,6 +17,13 @@ class Genre {
     return rows;
   }
 
+  static async queryCount() {
+    const [count] = await db.query("SELECT COUNT(*) AS genresCount FROM genre");
+    let genresCount = count[0].genresCount;
+
+    return genresCount;
+  }
+
   static async queryByGenreId(genreId) {
     const [result] = await db.query("SELECT * FROM genre WHERE genreId = ?", [
       genreId,

@@ -21,6 +21,15 @@ class Author {
     return rows;
   }
 
+  static async queryCount() {
+    const [count] = await db.query(
+      "SELECT COUNT(*) AS authorsCount FROM author"
+    );
+    let authorsCount = count[0].authorsCount;
+
+    return authorsCount;
+  }
+
   static async queryByAuthorId(authorId) {
     const [result] = await db.query("SELECT * FROM author WHERE authorId = ?", [
       authorId,

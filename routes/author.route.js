@@ -1,6 +1,5 @@
 var express = require("express");
 const authorController = require("../controllers/author.controller.js");
-const { asyncHandler } = require("../utils/asyncErrorHandler.js");
 var router = express.Router();
 
 router.get("/author/create", authorController.authorCreateGet);

@@ -1,6 +1,5 @@
 var express = require("express");
 const bookController = require("../controllers/book.controller.js");
-const { asyncHandler } = require("../utils/asyncErrorHandler.js");
 var router = express.Router();
 
 // GET request for creating a Book. NOTE This must come before routes that display Book (uses id).

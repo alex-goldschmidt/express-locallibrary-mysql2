@@ -21,6 +21,12 @@ class Book {
     return rows;
   }
 
+  static async queryCount() {
+    const [count] = await db.query("SELECT COUNT(*) as booksCount FROM book");
+    let booksCount = count[0].booksCount;
+    return booksCount;
+  }
+
   static async queryByBookId(bookId) {
     const [result] = await db.query("SELECT * FROM book WHERE bookId = ?", [
       bookId,

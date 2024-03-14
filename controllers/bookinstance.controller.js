@@ -3,7 +3,11 @@ const { asyncHandler } = require("../utils/asyncErrorHandler");
 
 // Display list of all BookInstances.
 exports.queryAllBookInstances = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance list");
+  const bookInstancesList = await BookInstance.queryAll();
+  res.render("bookInstancesList", {
+    title: "Book Instances List",
+    bookInstancesList: bookInstancesList,
+  });
 });
 
 // Display detail page for a specific BookInstance.

@@ -22,6 +22,24 @@ class BookInstance {
     return rows;
   }
 
+  static async queryCount() {
+    const [count] = await db.query(
+      "SELECT COUNT(*) AS bookInstancesCount FROM bookInstance"
+    );
+    let bookInstancesCount = count[0].bookInstancesCount;
+
+    return bookInstancesCount;
+  }
+
+  static async queryAvailableCount() {
+    const [count] = await db.query(
+      "SELECT COUNT(*) AS bookInstancesAvailableCount FROM bookInstance WHERE STATUS = 'available'"
+    );
+    let bookInstancesAvailableCount = count[0].bookInstancesAvailableCount;
+
+    return bookInstancesAvailableCount;
+  }
+
   static async queryByBookInstanceId(bookInstanceId) {
     const [result] = await db.query(
       "SELECT * FROM bookInstance WHERE bookInstanceId = ?",

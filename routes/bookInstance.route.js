@@ -1,6 +1,5 @@
 var express = require("express");
 const bookInstanceController = require("../controllers/bookInstance.controller.js");
-const { asyncHandler } = require("../utils/asyncErrorHandler.js");
 var router = express.Router();
 
 router.get(

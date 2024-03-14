@@ -1,6 +1,5 @@
 var express = require("express");
 const genreController = require("../controllers/genre.controller.js");
-const { asyncHandler } = require("../utils/asyncErrorHandler.js");
 var router = express.Router();
 
 router.get("/genre/create", genreController.genreCreateGet);

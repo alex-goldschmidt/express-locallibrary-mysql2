@@ -1,13 +1,11 @@
 const Book = require("../models/book.model");
 const { asyncHandler } = require("../utils/asyncErrorHandler");
 
-exports.index = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Site Home Page");
-});
-
 // Display list of all books.
 exports.queryAllBooks = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Book list");
+  const allBooks = await Book.queryAll();
+
+  res.render("bookList", { title: "Book List", bookList: allBooks });
 });
 
 // Display detail page for a specific book.
