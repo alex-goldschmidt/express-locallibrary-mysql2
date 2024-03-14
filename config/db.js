@@ -8,6 +8,7 @@ const pool = mysql
     user: process.env.MYSQL_ROOT,
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DB,
+    dateStrings: true,
   })
   .promise();
 
