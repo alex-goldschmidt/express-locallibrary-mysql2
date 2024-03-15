@@ -3,7 +3,11 @@ const { asyncHandler } = require("../utils/asyncErrorHandler");
 
 // Display list of all Genre.
 exports.queryAllGenres = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Genre list");
+  const genresList = await Genre.queryAll();
+  res.render("genresList", {
+    title: "List of Genres",
+    genresList: genresList,
+  });
 });
 
 // Display detail page for a specific Genre.

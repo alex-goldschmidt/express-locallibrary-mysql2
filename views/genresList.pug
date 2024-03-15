@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= title
+
+  if genresList.length
+    ul
+      each genre in genresList
+        li
+          a(href=`/genre/${genre.genreId}`)  #{genre.genreName}
+  else
+    p There are no genres.

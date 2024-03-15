@@ -18,7 +18,9 @@ class BookInstance {
   }
 
   static async queryAll() {
-    const [rows] = await db.query("SELECT * FROM bookInstance");
+    const [rows] = await db.query(
+      "SELECT *, DATE_FORMAT(dueDate, '%b %e, %Y') AS formattedDueDate FROM bookInstance"
+    );
     return rows;
   }
 

@@ -13,7 +13,7 @@ class Genre {
   }
 
   static async queryAll() {
-    const [rows] = await db.query("SELECT * FROM genre");
+    const [rows] = await db.query("SELECT * FROM genre ORDER BY genreName ASC");
     return rows;
   }
 
