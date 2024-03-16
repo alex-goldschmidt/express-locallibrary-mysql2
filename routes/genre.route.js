@@ -20,7 +20,7 @@ router.get("/genre/:id/update", genreController.genreUpdateGet);
 router.post("/genre/:id/update", genreController.genreUpdatePost);
 
 // GET request for one Genre.
-router.get("/genre/:id", genreController.queryByGenreId);
+router.get("/genre/:id", genreController.queryBooksByGenreId);
 
 // GET request for list of all Genre.
 router.get("/genres", genreController.queryAllGenres);

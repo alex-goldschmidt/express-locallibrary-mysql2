@@ -1,4 +1,4 @@
-const Genre = require("../models/genre.model");
+const Genre = require("../models/genre.model.js");
 const { asyncHandler } = require("../utils/asyncErrorHandler");
 
 // Display list of all Genre.
@@ -10,9 +10,20 @@ exports.queryAllGenres = asyncHandler(async (req, res, next) => {
   });
 });
 
-// Display detail page for a specific Genre.
-exports.queryByGenreId = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Genre detail: ${req.params.id}`);
+// Display books for a specific Genre ID.
+exports.queryBooksByGenreId = asyncHandler(async (req, res, next) => {
+  let genreId = req.params.id;
+  let booksInGenre = await Genre.queryBooksByGenreId(genreId);
+
+  if (booksInGenre === null) {
+    const err = new Error("GenreId not found");
+    err.status = 404;
+    return next(err);
+  }
+  return res.render("genreDetail", {
+    title: "Genre Detail",
+    booksInGenre: booksInGenre,
+  });
 });
 
 // Display genre create form on GET.

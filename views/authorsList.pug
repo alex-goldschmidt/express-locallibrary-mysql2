@@ -7,7 +7,7 @@ block content
     ul
       each author in authorsList
         li
-          a(href=`/author/${author.authorId}`)  #{author.name}
+          a(href=`/catalog/author/${author.authorId}`)  #{author.name}
           |  (#{author.formattedDateOfBirth} - #{author.formattedDateOfDeath})
   else
     p There are no authors.

@@ -17,12 +17,12 @@ class Author {
   }
 
   static async queryAllAuthors() {
-    const [rows] = await db.query(
-      `SELECT *, DATE_FORMAT(dateOfBirth, '%b %e, %Y') AS formattedDateOfBirth, 
+    const [rows] = await db.query(`
+      SELECT *, DATE_FORMAT(dateOfBirth, '%b %e, %Y') AS formattedDateOfBirth, 
       DATE_FORMAT(dateOfDeath, '%b %e, %Y') AS formattedDateOfDeath 
       FROM author 
-      ORDER BY name ASC`
-    );
+      ORDER BY name ASC
+      `);
     return rows;
   }
 

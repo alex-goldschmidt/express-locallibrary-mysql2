@@ -13,7 +13,7 @@ class Genre {
   }
 
   static async queryAll() {
-    const [rows] = await db.query("SELECT * FROM genre ORDER BY genreName ASC");
+    const [rows] = await db.query("SELECT * FROM genre");
     return rows;
   }
 
@@ -44,6 +44,14 @@ class Genre {
       genreId,
     ]);
     return result[0];
+  }
+
+  static async queryBooksByGenreId(genreId) {
+    const [result] = await db.query(
+      `SELECT b.title AS bookTitle, b.summary AS bookSummary, g.genreName FROM book b LEFT JOIN genre g ON b.genre = g.genreName WHERE genreId = ?`,
+      [genreId]
+    );
+    return result;
   }
 }
 
