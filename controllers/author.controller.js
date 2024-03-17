@@ -12,7 +12,22 @@ exports.queryAllAuthors = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific Author.
 exports.queryByAuthorId = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Author detail: ${req.params.id}`);
+  const authorId = req.params.id;
+  const [author, authorBooks] = await Promise.all([
+    Author.queryByAuthorId(authorId),
+    Author.queryBooksByAuthorId(authorId),
+  ]);
+
+  if (author === null) {
+    const err = new Error("Author not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("authorDetail", {
+    author: author,
+    authorBooks: authorBooks,
+  });
 });
 
 // Display Author create form on GET.

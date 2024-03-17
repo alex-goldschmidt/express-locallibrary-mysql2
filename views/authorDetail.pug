@@ -1,0 +1,18 @@
+extends layout
+
+block content
+
+  h1 Author: #{author.name}
+  p #{author.formattedDateOfBirth} - #{author.formattedDateOfDeath}
+
+  div(style='margin-left:20px;margin-top:20px')
+
+    h4 Books
+    if authorBooks.length
+      dl
+        each book in authorBooks
+          dt
+            a(href=`/catalog/book/${book.bookId}`)  #{book.bookTitle}
+          dd #{book.bookSummary}
+    else
+      p This author has no books.

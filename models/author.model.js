@@ -36,10 +36,24 @@ class Author {
   }
 
   static async queryByAuthorId(authorId) {
-    const [result] = await db.query("SELECT * FROM author WHERE authorId = ?", [
-      authorId,
-    ]);
+    const [result] = await db.query(
+      `SELECT a.*, 
+      DATE_FORMAT(a.dateOfBirth, '%b %e, %Y') AS formattedDateOfBirth, 
+      DATE_FORMAT(a.dateOfDeath, '%b %e, %Y') AS formattedDateOfDeath FROM author a WHERE authorId = ?`,
+      [authorId]
+    );
     return result[0];
+  }
+
+  static async queryBooksByAuthorId(authorId) {
+    const [result] = await db.query(
+      `SELECT a.*, b.bookId as bookId, b.title AS bookTitle, b.summary AS bookSummary
+      FROM author a 
+      JOIN book b ON b.author = a.name
+      WHERE authorId = ?`,
+      [authorId]
+    );
+    return result;
   }
 
   static async updateByAuthorId(author, authorId) {

@@ -48,7 +48,7 @@ class Genre {
 
   static async queryBooksByGenreId(genreId) {
     const [result] = await db.query(
-      `SELECT b.title AS bookTitle, b.summary AS bookSummary, g.genreName FROM book b LEFT JOIN genre g ON b.genre = g.genreName WHERE genreId = ?`,
+      `SELECT b.title AS bookTitle, b.summary AS bookSummary, b.bookId AS bookId, g.genreName FROM book b LEFT JOIN genre g ON b.genre = g.genreName WHERE genreId = ?`,
       [genreId]
     );
     return result;

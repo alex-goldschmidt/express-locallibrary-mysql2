@@ -21,7 +21,7 @@ router.get("/book/:id/update", bookController.bookUpdateGet);
 router.post("/book/:id/update", bookController.bookUpdatePost);
 
 // GET request for one Book.
-router.get("/book/:id", bookController.queryByBookId);
+router.get("/book/:id", bookController.queryBookInstancesByBookId);
 
 // GET request for list of all Book items.
 router.get("/books", bookController.queryAllBooks);

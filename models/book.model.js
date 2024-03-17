@@ -28,9 +28,12 @@ class Book {
   }
 
   static async queryByBookId(bookId) {
-    const [result] = await db.query("SELECT * FROM book WHERE bookId = ?", [
-      bookId,
-    ]);
+    const [result] = await db.query(
+      `SELECT b.*, g.genreId AS genreId FROM book b
+       LEFT JOIN genre g ON g.genreName = b.genre
+       WHERE bookId = ?`,
+      [bookId]
+    );
     return result[0];
   }
 

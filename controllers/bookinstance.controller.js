@@ -1,4 +1,4 @@
-const BookInstance = require("../models/bookinstance.model");
+const BookInstance = require("../models/bookInstance.model");
 const { asyncHandler } = require("../utils/asyncErrorHandler");
 
 // Display list of all BookInstances.
@@ -12,7 +12,13 @@ exports.queryAllBookInstances = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific BookInstance.
 exports.queryByBookInstanceId = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: BookInstance detail: ${req.params.id}`);
+  const bookInstanceId = req.params.id;
+  const bookInstance = await BookInstance.queryByBookInstanceId(bookInstanceId);
+
+  res.render("bookInstanceDetail", {
+    title: `Book: ${bookInstance.title}`,
+    bookInstance: bookInstance,
+  });
 });
 
 // Display bookInstance create form on GET.

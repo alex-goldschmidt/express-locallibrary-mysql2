@@ -21,7 +21,7 @@ exports.queryBooksByGenreId = asyncHandler(async (req, res, next) => {
     return next(err);
   }
   return res.render("genreDetail", {
-    title: "Genre Detail",
+    title: booksInGenre[0].genreName,
     booksInGenre: booksInGenre,
   });
 });

@@ -44,10 +44,18 @@ class BookInstance {
 
   static async queryByBookInstanceId(bookInstanceId) {
     const [result] = await db.query(
-      "SELECT * FROM bookInstance WHERE bookInstanceId = ?",
+      "SELECT bi.*, DATE_FORMAT(bi.dueDate, '%b %e, %Y') AS formattedDueDate FROM bookInstance bi WHERE bookInstanceId = ?",
       [bookInstanceId]
     );
     return result[0];
+  }
+
+  static async queryBooksByBookInstanceId(bookId) {
+    const [result] = await db.query(
+      "SELECT * FROM bookInstance WHERE bookId = ?",
+      [bookId]
+    );
+    return result;
   }
 
   static async updateByBookInstanceId(bookInstance, bookInstanceId) {
