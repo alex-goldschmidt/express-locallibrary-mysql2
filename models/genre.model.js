@@ -4,12 +4,11 @@ class Genre {
   constructor(genre) {
     this.genreId = genre.genreId;
     this.genreName = genre.genreName;
-    this.genreUrl = genre.genreUrl;
   }
 
   static async create(newGenre) {
     const [result] = await db.query("INSERT INTO genre SET ?", [newGenre]);
-    return { id: result.insertId, ...newGenre };
+    return { genreId: result.insertId, genreName: newGenre.genreName };
   }
 
   static async queryAll() {
@@ -31,6 +30,13 @@ class Genre {
     return result[0];
   }
 
+  static async queryByGenreName(genreName) {
+    const [result] = await db.query("SELECT * FROM genre WHERE genreName = ?", [
+      genreName,
+    ]);
+    return result[0];
+  }
+
   static async updateByGenreId(genre, genreId) {
     const [rows] = await db.query(
       "UPDATE genre SET genreName = ?, genreUrl = ? WHERE genreId = ?",
@@ -48,7 +54,8 @@ class Genre {
 
   static async queryBooksByGenreId(genreId) {
     const [result] = await db.query(
-      `SELECT b.title AS bookTitle, b.summary AS bookSummary, b.bookId AS bookId, g.genreName FROM book b LEFT JOIN genre g ON b.genre = g.genreName WHERE genreId = ?`,
+      `SELECT b.title AS bookTitle, b.summary AS bookSummary, b.bookId AS bookId, g.genreName AS genreName FROM book b 
+      LEFT JOIN genre g ON b.genre = g.genreName WHERE genreId = ?`,
       [genreId]
     );
     return result;
