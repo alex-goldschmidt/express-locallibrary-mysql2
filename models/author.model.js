@@ -3,12 +3,9 @@ const db = require("../config/db");
 class Author {
   constructor(author) {
     this.authorId = author.authorId;
-    this.firstName = author.firstName;
-    this.lastName = author.lastName;
+    this.name = author.name;
     this.dateOfBirth = author.dateOfBirth;
     this.dateOfDeath = author.dateOfDeath;
-    this.lifespan = author.lifespan;
-    this.authorUrl = author.authorUrl;
   }
 
   static async create(newAuthor) {
@@ -56,18 +53,17 @@ class Author {
     return result;
   }
 
+  static async queryByAuthorName(name) {
+    const [result] = await db.query("SELECT * FROM author WHERE name = ?", [
+      name,
+    ]);
+    return result[0];
+  }
+
   static async updateByAuthorId(author, authorId) {
     const [rows] = await db.query(
-      "UPDATE author SET firstName = ?, lastName = ?, dateOfBirth = ?, dateOfDeath = ?, lifespan = ?, authorUrl = ? WHERE authorId = ?",
-      [
-        author.firstName,
-        author.lastName,
-        author.dateOfBirth,
-        author.dateOfDeath,
-        author.lifespan,
-        author.authorUrl,
-        authorId,
-      ]
+      "UPDATE author SET name = ?, dateOfBirth = ?, dateOfDeath = ? WHERE authorId = ?",
+      [author.name, author.dateOfBirth, author.dateOfDeath, authorId]
     );
     return rows;
   }

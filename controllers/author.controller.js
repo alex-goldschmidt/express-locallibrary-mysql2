@@ -1,5 +1,6 @@
 const Author = require("../models/author.model");
 const { asyncHandler } = require("../utils/asyncErrorHandler");
+const { body, validationResult } = require("express-validator");
 
 // Display list of all Authors.
 exports.queryAllAuthors = asyncHandler(async (req, res, next) => {
@@ -31,14 +32,55 @@ exports.queryByAuthorId = asyncHandler(async (req, res, next) => {
 });
 
 // Display Author create form on GET.
-exports.authorCreateGet = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Author create GET");
-});
+exports.authorCreateGet = (req, res, next) => {
+  res.render("authorForm", { title: "Create Author" });
+};
 
 // Handle Author create on POST.
-exports.authorCreatePost = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Author create POST");
-});
+exports.authorCreatePost = [
+  body("name")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Name must be specified."),
+  body("dateOfBirth", "Invalid date of birth")
+    .optional({ values: "falsy" })
+    .isISO8601()
+    .toDate(),
+  body("dateOfDeath", "Invalid date of death")
+    .optional({ values: "falsy" })
+    .isISO8601()
+    .toDate(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const author = new Author({
+      name: req.body.name,
+      dateOfBirth: req.body.dateOfBirth,
+      dateOfDeath: req.body.dateOfDeath ? req.body.dateOfDeath : null,
+    });
+
+    if (errors.isEmpty()) {
+      const authorExists = await Author.queryByAuthorName({
+        name: req.body.name,
+      });
+      if (authorExists) {
+        res.redirect(`/catalog/author/${authorExists.authorId}`);
+      } else {
+        const data = await Author.create(author);
+        res.redirect(`/catalog/author/${data.id}`);
+      }
+    } else {
+      res.render("authorForm", {
+        title: "Create Author",
+        author: author,
+        errors: errors.array(),
+      });
+      return;
+    }
+  }),
+];
 
 // Display Author delete form on GET.
 exports.authorDeleteGet = asyncHandler(async (req, res, next) => {

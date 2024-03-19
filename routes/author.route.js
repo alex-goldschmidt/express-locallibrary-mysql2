@@ -5,7 +5,7 @@ var router = express.Router();
 router.get("/author/create", authorController.authorCreateGet);
 
 // POST request for creating Author.
-router.post("/author/create", authorController.authorCreateGet);
+router.post("/author/create", authorController.authorCreatePost);
 
 // GET request to delete Author.
 router.get("/author/:id/delete", authorController.authorDeleteGet);
