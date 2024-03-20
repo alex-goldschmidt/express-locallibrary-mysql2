@@ -8,7 +8,6 @@ class Book {
     this.summary = book.summary;
     this.isbn = book.isbn;
     this.genre = book.genre;
-    this.bookUrl = book.bookUrl;
   }
 
   static async create(newBook) {
