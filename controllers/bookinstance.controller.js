@@ -1,5 +1,7 @@
 const BookInstance = require("../models/bookInstance.model");
+const Book = require("../models/book.model");
 const { asyncHandler } = require("../utils/asyncErrorHandler");
+const { body, validationResult } = require("express-validator");
 
 // Display list of all BookInstances.
 exports.queryAllBookInstances = asyncHandler(async (req, res, next) => {
@@ -23,13 +25,57 @@ exports.queryByBookInstanceId = asyncHandler(async (req, res, next) => {
 
 // Display bookInstance create form on GET.
 exports.bookInstanceCreateGet = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance create GET");
+  const allBooks = await Book.queryAll();
+
+  res.render("bookInstanceForm", {
+    title: "Create BookInstance",
+    bookList: allBooks,
+  });
 });
 
 // Handle bookInstance create on POST.
-exports.bookInstanceCreatePost = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance create POST");
-});
+exports.bookInstanceCreatePost = [
+  body("book", "Book must be specified").trim().isLength({ min: 1 }).escape(),
+  body("imprint", "Imprint must be specified")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("status").escape(),
+  body("dueDate", "Invalid date")
+    .optional({ values: "falsy" })
+    .isISO8601()
+    .toDate(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const bookInstance = new BookInstance({
+      bookId: req.body.book,
+      imprint: req.body.imprint,
+      status: req.body.status,
+      dueDate: req.body.dueDate ? req.body.dueDate : null,
+    });
+
+    const book = await Book.queryByBookId(bookInstance.bookId);
+    bookInstance.title = book.title;
+
+    if (errors.isEmpty()) {
+      const newBookInstance = await BookInstance.create(bookInstance);
+      res.redirect(`/catalog/bookInstance/${newBookInstance.id}`);
+    } else {
+      const allBooks = await Book.queryAll();
+
+      res.render("bookInstanceForm", {
+        title: "Create BookInstance",
+        bookList: allBooks,
+        selectedBook: bookInstance.bookId,
+        errors: errors.array(),
+        bookInstance: bookInstance,
+      });
+      return;
+    }
+  }),
+];
 
 // Display bookInstance delete form on GET.
 exports.bookInstanceDeleteGet = asyncHandler(async (req, res, next) => {

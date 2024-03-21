@@ -4,10 +4,10 @@ class BookInstance {
   constructor(bookInstance) {
     this.bookInstanceId = bookInstance.bookInstanceId;
     this.bookId = bookInstance.bookId;
+    this.title = bookInstance.title;
     this.imprint = bookInstance.imprint;
     this.status = bookInstance.status;
     this.dueDate = bookInstance.dueDate;
-    this.bookInstanceUrl = bookInstance.bookInstanceUrl;
   }
 
   static async create(newBookInstance) {
