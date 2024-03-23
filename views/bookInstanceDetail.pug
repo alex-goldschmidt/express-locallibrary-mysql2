@@ -18,3 +18,9 @@ block content
 
   if bookInstance.status!='Available'
     p #[strong Due back:] #{bookInstance.formattedDueDate}
+
+  hr
+  p
+    a(href=`/catalog/bookInstance/${bookInstance.bookInstanceId}/delete`) Delete Book Instance
+  p
+    a(href=`/catalog/bookInstance/${bookInstance.bookInstanceId}/update`) Update Book    

@@ -13,9 +13,9 @@ exports.queryAllGenres = asyncHandler(async (req, res, next) => {
 
 // Display books for a specific Genre ID.
 exports.queryBooksByGenreId = asyncHandler(async (req, res, next) => {
-  let genreId = req.params.id;
-  let genre = await Genre.queryByGenreId(genreId);
-  let booksInGenre = await Genre.queryBooksByGenreId(genreId);
+  const genreId = req.params.id;
+  const genre = await Genre.queryByGenreId(genreId);
+  const booksInGenre = await Genre.queryBooksByGenreId(genreId);
 
   if (!booksInGenre.length) {
     const err = new Error(`The ${genre.genreName} genre has no books`);
@@ -23,7 +23,8 @@ exports.queryBooksByGenreId = asyncHandler(async (req, res, next) => {
     return next(err);
   }
   return res.render("genreDetail", {
-    title: booksInGenre[0].genreName,
+    title: genre.genreName,
+    genre: genre,
     booksInGenre: booksInGenre,
   });
 });
@@ -67,12 +68,42 @@ exports.genreCreatePost = [
 
 // Display genre delete form on GET.
 exports.genreDeleteGet = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Genre delete GET");
+  const genreId = req.params.id;
+
+  const [genre, genreBooks] = await Promise.all([
+    Genre.queryByGenreId(genreId),
+    Genre.queryBooksByGenreId(genreId),
+  ]);
+
+  if (genre === null) {
+    res.redirect("/catalog/genres");
+  }
+
+  res.render("genreDelete", {
+    genre: genre,
+    genreBooks: genreBooks,
+  });
 });
 
-// Handle genre delete on POST.
 exports.genreDeletePost = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Genre delete POST");
+  const genreId = req.params.id;
+
+  const [genre, genreBooks] = await Promise.all([
+    Genre.queryByGenreId(genreId),
+    Genre.queryBooksByGenreId(genreId),
+  ]);
+
+  if (genreBooks.length > 0) {
+    res.render("genreDelete", {
+      title: "Delete Genre",
+      genre: genre,
+      genreBooks: genreBooks,
+    });
+    return;
+  } else {
+    await Genre.deleteByGenreId(genreId);
+    res.redirect("/catalog/genres");
+  }
 });
 
 // Display genre update form on GET.

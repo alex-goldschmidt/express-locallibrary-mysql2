@@ -15,3 +15,9 @@ block content
           dd #{book.bookSummary}
     else
       p This genre has no books.
+
+  hr
+  p
+    a(href=`/catalog/genre/${genre.genreId}/delete`) Delete Genre
+  p
+    a(href=`/catalog/genre/${genre.genreId}/update`) Update Genre     
