@@ -84,12 +84,43 @@ exports.authorCreatePost = [
 
 // Display Author delete form on GET.
 exports.authorDeleteGet = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Author delete GET");
+  const authorId = req.params.id;
+
+  const [author, allBooksByAuthor] = await Promise.all([
+    Author.queryByAuthorId(authorId),
+    Author.queryBooksByAuthorId(authorId),
+  ]);
+
+  if (author === null) {
+    res.redirect("/catalog/authors");
+  }
+
+  res.render("authorDelete", {
+    author: author,
+    authorBooks: allBooksByAuthor,
+  });
 });
 
 // Handle Author delete on POST.
 exports.authorDeletePost = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Author delete POST");
+  const authorId = req.params.id;
+
+  const [author, allBooksByAuthor] = await Promise.all([
+    Author.queryByAuthorId(authorId),
+    Author.queryBooksByAuthorId(authorId),
+  ]);
+
+  if (allBooksByAuthor.length > 0) {
+    res.render("authorDelete", {
+      title: "Delete Author",
+      author: author,
+      author_books: allBooksByAuthor,
+    });
+    return;
+  } else {
+    await Author.deleteByAuthorId(authorId);
+    res.redirect("/catalog/authors");
+  }
 });
 
 // Display Author update form on GET.

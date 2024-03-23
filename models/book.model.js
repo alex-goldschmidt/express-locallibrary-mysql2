@@ -38,16 +38,8 @@ class Book {
 
   static async updateByBookId(book, bookId) {
     const [rows] = await db.query(
-      "UPDATE book SET title = ?, author = ?, summary = ?, isbn = ?, genre = ?, bookUrl = ? WHERE bookId = ?",
-      [
-        book.title,
-        book.author,
-        book.summary,
-        book.isbn,
-        book.genre,
-        book.bookUrl,
-        bookId,
-      ]
+      "UPDATE book SET title = ?, author = ?, summary = ?, isbn = ?, genre = ? WHERE bookId = ?",
+      [book.title, book.author, book.summary, book.isbn, book.genre, bookId]
     );
     return rows;
   }

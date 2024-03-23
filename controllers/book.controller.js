@@ -78,11 +78,9 @@ exports.bookCreatePost = [
         Genre.queryAllByGenreName(book.genre),
       ]);
 
-      for (let genre of allGenres) {
-        if (book.genre.includes(genre.genreName)) {
-          genre.checked = "true";
-        }
-      }
+      allGenres.forEach((genre) => {
+        if (book.genre.includes(genre.genreName)) genre.checked = "true";
+      });
       res.render("bookForm", {
         title: "Create Book",
         authors: allAuthors,
@@ -106,10 +104,79 @@ exports.bookDeletePost = asyncHandler(async (req, res, next) => {
 
 // Display book update form on GET.
 exports.bookUpdateGet = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Book update GET");
+  const bookId = req.params.id;
+  const book = await Book.queryByBookId(bookId);
+  const allAuthors = await Author.queryAllAuthors();
+  const allGenres = await Genre.queryAll();
+
+  if (book === null) {
+    const err = new Error("Book not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  allGenres.forEach((genre) => {
+    if (book.genre.includes(genre.genreName)) genre.checked = "true";
+  });
+
+  res.render("bookForm", {
+    title: "Update Book",
+    authors: allAuthors,
+    genres: allGenres,
+    book: book,
+  });
 });
 
 // Handle book update on POST.
-exports.bookUpdatePost = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Book update POST");
-});
+exports.bookUpdatePost = [
+  body("title", "Title must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("author", "Author must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("summary", "Summary must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("isbn", "ISBN must not be empty").trim().isLength({ min: 1 }).escape(),
+  body("genre.*").escape(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+    const bookId = req.params.id;
+
+    const book = new Book({
+      title: req.body.title,
+      author: req.body.author,
+      summary: req.body.summary,
+      isbn: req.body.isbn,
+      genre: req.body.genre,
+      id: bookId,
+    });
+
+    if (errors.isEmpty()) {
+      await Book.updateByBookId(book, bookId);
+      const updatedBook = await Book.queryByBookId(bookId);
+      res.redirect(`/catalog/book/${updatedBook.bookId}`);
+    } else {
+      const [allAuthors, allGenres] = await Promise.all([
+        Author.queryAllAuthorsByAuthorName(book.author),
+        Genre.queryAllByGenreName(book.genre),
+      ]);
+
+      allGenres.forEach((genre) => {
+        if (book.genre.includes(genre.genreName)) genre.checked = "true";
+      });
+      res.render("bookForm", {
+        title: "Update Book",
+        authors: allAuthors,
+        genres: allGenres,
+        book: book,
+        errors: errors.array(),
+      });
+    }
+  }),
+];
