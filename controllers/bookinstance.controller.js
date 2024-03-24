@@ -106,10 +106,75 @@ exports.bookInstanceDeletePost = asyncHandler(async (req, res, next) => {
 
 // Display bookInstance update form on GET.
 exports.bookInstanceUpdateGet = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance update GET");
+  const bookInstanceId = req.params.id;
+  const bookInstance = await BookInstance.queryByBookInstanceId(bookInstanceId);
+
+  if (bookInstance === null) {
+    const err = new Error("Book Instance not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  const allBooks = await Book.queryAll();
+
+  if (!allBooks.length) {
+    const err = new Error("No books found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("bookInstanceForm", {
+    title: "Update Book Instance",
+    bookList: allBooks,
+    selectedBook: bookInstance.bookId,
+    bookInstance: bookInstance,
+  });
 });
 
 // Handle bookInstance update on POST.
-exports.bookInstanceUpdatePost = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance update POST");
-});
+exports.bookInstanceUpdatePost = [
+  body("book", "Book must be specified").trim().isLength({ min: 1 }).escape(),
+  body("imprint", "Imprint must be specified")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("status").escape(),
+  body("dueDate", "Invalid date")
+    .optional({ values: "falsy" })
+    .isISO8601()
+    .toDate(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+    const bookInstanceId = req.params.id;
+
+    const bookInstance = new BookInstance({
+      bookId: req.body.book,
+      imprint: req.body.imprint,
+      status: req.body.status,
+      dueDate: req.body.dueDate ? req.body.dueDate : null,
+      id: bookInstanceId,
+    });
+
+    if (errors.isEmpty()) {
+      await BookInstance.updateByBookInstanceId(bookInstance, bookInstanceId);
+      const updatedBookInstance = await BookInstance.queryByBookInstanceId(
+        bookInstanceId
+      );
+      res.redirect(
+        `/catalog/bookInstance/${updatedBookInstance.bookInstanceId}`
+      );
+    } else {
+      const allBooks = await Book.queryAll();
+
+      res.render("bookInstanceForm", {
+        title: "Update BookInstance",
+        bookList: allBooks,
+        selectedBook: bookInstance.bookId,
+        errors: errors.array(),
+        bookInstance: bookInstance,
+      });
+      return;
+    }
+  }),
+];

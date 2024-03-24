@@ -31,10 +31,9 @@ exports.queryByAuthorId = asyncHandler(async (req, res, next) => {
   });
 });
 
-// Display Author create form on GET.
-exports.authorCreateGet = (req, res, next) => {
+exports.authorCreateGet = asyncHandler(async (req, res, next) => {
   res.render("authorForm", { title: "Create Author" });
-};
+});
 
 // Handle Author create on POST.
 exports.authorCreatePost = [
@@ -61,23 +60,24 @@ exports.authorCreatePost = [
       dateOfDeath: req.body.dateOfDeath ? req.body.dateOfDeath : null,
     });
 
-    if (errors.isEmpty()) {
-      const authorExists = await Author.queryByAuthorName({
-        name: req.body.name,
-      });
-      if (authorExists) {
-        res.redirect(`/catalog/author/${authorExists.authorId}`);
-      } else {
-        const data = await Author.create(author);
-        res.redirect(`/catalog/author/${data.id}`);
-      }
-    } else {
+    if (!errors.isEmpty()) {
       res.render("authorForm", {
         title: "Create Author",
         author: author,
         errors: errors.array(),
       });
       return;
+    }
+
+    const authorExists = await Author.queryByAuthorName({
+      name: req.body.name,
+    });
+
+    if (authorExists) {
+      res.redirect(`/catalog/author/${authorExists.authorId}`);
+    } else {
+      const data = await Author.create(author);
+      res.redirect(`/catalog/author/${data.id}`);
     }
   }),
 ];
@@ -114,7 +114,7 @@ exports.authorDeletePost = asyncHandler(async (req, res, next) => {
     res.render("authorDelete", {
       title: "Delete Author",
       author: author,
-      author_books: allBooksByAuthor,
+      authorBooks: allBooksByAuthor,
     });
     return;
   } else {
@@ -128,7 +128,59 @@ exports.authorUpdateGet = asyncHandler(async (req, res, next) => {
   res.send("NOT IMPLEMENTED: Author update GET");
 });
 
-// Handle Author update on POST.
-exports.authorUpdatePost = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Author update POST");
+exports.authorUpdateGet = asyncHandler(async (req, res, next) => {
+  const authorId = req.params.id;
+  const author = await Author.queryByAuthorIdWithFormatForDateInputs(authorId);
+
+  if (author === null) {
+    const err = new Error("Author not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("authorForm", {
+    title: "Update Author",
+    author: author,
+  });
 });
+
+// Handle Author update on POST.
+exports.authorUpdatePost = [
+  body("name")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Name must be specified."),
+  body("dateOfBirth", "Invalid date of birth")
+    .optional({ values: "falsy" })
+    .isISO8601()
+    .toDate(),
+  body("dateOfDeath", "Invalid date of death")
+    .optional({ values: "falsy" })
+    .isISO8601()
+    .toDate(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+    const authorId = req.params.id;
+
+    let author = new Author({
+      name: req.body.name,
+      dateOfBirth: req.body.dateOfBirth,
+      dateOfDeath: req.body.dateOfDeath ? req.body.dateOfDeath : null,
+      id: authorId,
+    });
+
+    if (!errors.isEmpty()) {
+      res.render("authorForm", {
+        title: "Update Author",
+        author: author,
+        errors: errors.array(),
+      });
+      return;
+    }
+    await Author.updateByAuthorId(author, authorId);
+    author = await Author.queryByAuthorId(authorId);
+    res.redirect(`/catalog/author/${author.authorId}`);
+  }),
+];

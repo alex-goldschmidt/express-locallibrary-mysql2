@@ -5,14 +5,14 @@ block content
 
   form(method='POST')
     div.form-group
-      label(for='name') Family Name:
+      label(for='name') Full Name:
       input#name.form-control(type='text', placeholder='Full Name' name='name' required value=(undefined===author ? '' : author.name))
     div.form-group
       label(for='dateOfBirth') Date of birth:
-      input#dateOfBirth.form-control(type='date' name='dateOfBirth' value=(undefined===author ? null : author.dateOfBirth) )
+      input#dateOfBirth.form-control(type='date' name='dateOfBirth' value=(undefined===author ? null : author.formattedDateOfBirth) )
     div.form-group
       label(for='dateOfDeath') Date of death:
-      input#dateOfDeath.form-control(type='date' name='dateOfDeath' value=(undefined===author ? null : author.dateOfDeath) )  
+      input#dateOfDeath.form-control(type='date' name='dateOfDeath' value=(undefined===author ? null : author.formattedDateOfDeath) )  
     button.btn.btn-primary(type='submit') Submit
 
   if errors

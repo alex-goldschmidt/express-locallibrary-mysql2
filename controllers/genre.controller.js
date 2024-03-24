@@ -17,8 +17,8 @@ exports.queryBooksByGenreId = asyncHandler(async (req, res, next) => {
   const genre = await Genre.queryByGenreId(genreId);
   const booksInGenre = await Genre.queryBooksByGenreId(genreId);
 
-  if (!booksInGenre.length) {
-    const err = new Error(`The ${genre.genreName} genre has no books`);
+  if (genre === null) {
+    const err = new Error("Genre not found");
     err.status = 404;
     return next(err);
   }
@@ -108,10 +108,43 @@ exports.genreDeletePost = asyncHandler(async (req, res, next) => {
 
 // Display genre update form on GET.
 exports.genreUpdateGet = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Genre update GET");
+  const genreId = req.params.id;
+  const genre = await Genre.queryByGenreId(genreId);
+
+  if (genre === null) {
+    const err = new Error("Genre not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("genreForm", {
+    title: "Update Genre",
+    genre: genre,
+  });
 });
 
-// Handle genre update on POST.
-exports.genreUpdatePost = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Genre update POST");
-});
+exports.genreUpdatePost = [
+  body("genreName", "Genre name must contain at least 3 characters")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+    const genreId = req.params.id;
+    const genre = new Genre({ genreName: req.body.genreName });
+
+    if (errors.isEmpty()) {
+      await Genre.updateByGenreId(genre, genreId);
+      const updatedGenre = await Genre.queryByGenreId(genreId);
+      res.redirect(`/catalog/genre/${updatedGenre.genreId}`);
+    } else {
+      res.render("genreForm", {
+        title: "Create Genre",
+        genre: genre,
+        errors: errors.array(),
+      });
+      return;
+    }
+  }),
+];

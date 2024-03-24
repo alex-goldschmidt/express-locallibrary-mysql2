@@ -36,6 +36,13 @@ class Book {
     return result[0];
   }
 
+  static async queryAllByGenre(genreName) {
+    const [result] = await db.query("SELECT * FROM book WHERE genre = ?", [
+      genreName,
+    ]);
+    return result;
+  }
+
   static async updateByBookId(book, bookId) {
     const [rows] = await db.query(
       "UPDATE book SET title = ?, author = ?, summary = ?, isbn = ?, genre = ? WHERE bookId = ?",

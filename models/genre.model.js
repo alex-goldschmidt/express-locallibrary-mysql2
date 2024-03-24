@@ -46,8 +46,8 @@ class Genre {
 
   static async updateByGenreId(genre, genreId) {
     const [rows] = await db.query(
-      "UPDATE genre SET genreName = ?, genreUrl = ? WHERE genreId = ?",
-      [genre.genreName, genreUrl, genreId]
+      "UPDATE genre SET genreName = ? WHERE genreId = ?",
+      [genre.genreName, genreId]
     );
     return rows;
   }

@@ -42,6 +42,16 @@ class Author {
     return result[0];
   }
 
+  static async queryByAuthorIdWithFormatForDateInputs(authorId) {
+    const [result] = await db.query(
+      `SELECT a.*, 
+      DATE_FORMAT(a.dateOfBirth, '%Y-%m-%d') AS formattedDateOfBirth, 
+      DATE_FORMAT(a.dateOfDeath, '%Y-%m-%d') AS formattedDateOfDeath FROM author a WHERE authorId = ?`,
+      [authorId]
+    );
+    return result[0];
+  }
+
   static async queryBooksByAuthorId(authorId) {
     const [result] = await db.query(
       `SELECT a.*, b.bookId as bookId, b.title AS bookTitle, b.summary AS bookSummary

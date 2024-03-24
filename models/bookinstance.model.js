@@ -60,13 +60,12 @@ class BookInstance {
 
   static async updateByBookInstanceId(bookInstance, bookInstanceId) {
     const [rows] = await db.query(
-      "UPDATE bookInstance SET bookId = ? imprint = ?, status = ?, dueDate = ?, bookInstanceUrl = ? WHERE bookInstanceId = ?",
+      "UPDATE bookInstance SET bookId = ?, imprint = ?, status = ?, dueDate = ? WHERE bookInstanceId = ?",
       [
         bookInstance.bookId,
         bookInstance.imprint,
         bookInstance.status,
         bookInstance.dueDate,
-        bookInstance.bookInstanceUrl,
         bookInstanceId,
       ]
     );

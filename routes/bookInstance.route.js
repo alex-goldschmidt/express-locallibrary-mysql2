@@ -1,5 +1,5 @@
 var express = require("express");
-const bookInstanceController = require("../controllers/bookInstance.controller.js");
+const bookInstanceController = require("../controllers/bookinstance.controller.js");
 var router = express.Router();
 
 router.get(
